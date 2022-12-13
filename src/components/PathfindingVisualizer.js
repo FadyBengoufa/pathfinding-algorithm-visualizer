@@ -21,11 +21,18 @@ export default class PathfindingVisualizer extends Component {
     this.state = {
       grid: [],
       mouseIsPressed: false,
-      selectedAlgorithm: null,
+      maze_walls: [],
+      algorithmsList: [
+        { value: "", label: "Algorithms" },
+        { value: "Dijkstra's", label: "Dijkstra's Algorithm" },
+        { value: "A* Search", label: "A* Search" },
+      ],
+      selectedAlgorithm: "",
     };
   }
 
   componentDidMount() {
+    document.title = "Pathfinding Visualizer";
     /**
      * Create an empty Board
      */
@@ -128,8 +135,11 @@ export default class PathfindingVisualizer extends Component {
   }
 
   clearBoard() {
+    console.log("CLEARING THE BOARD...");
     const newGrid = getInitialGrid();
+
     this.setState({ grid: newGrid });
+    this.setState({ maze_walls: [] });
     /**
      * Remove the styles of the nodes.
      */
@@ -139,6 +149,7 @@ export default class PathfindingVisualizer extends Component {
 
         element.classList.remove("node-visited");
         element.classList.remove("node-shortest-path");
+        element.classList.remove("node-maze");
       }
     }
 
@@ -146,6 +157,7 @@ export default class PathfindingVisualizer extends Component {
   }
 
   animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
+    console.log("Animating Dijkstra...");
     for (let i = 0; i <= visitedNodesInOrder.length; i++) {
       if (i === visitedNodesInOrder.length) {
         setTimeout(() => {
@@ -189,6 +201,7 @@ export default class PathfindingVisualizer extends Component {
   }
 
   animateShortestPath(nodesInShortestPathOrder) {
+    console.log("Animating Shortest Path...");
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
       setTimeout(() => {
         const node = nodesInShortestPathOrder[i];
@@ -212,19 +225,18 @@ export default class PathfindingVisualizer extends Component {
   }
 
   createRecursiveDivisionMaze() {
+    this.clearBoard();
     const { grid } = this.state;
     const startNode = getStartNode(grid);
     const finishNode = getFinishNode(grid);
-    const walls = recursiveDivision(
-      grid,
-      getStartNode(grid),
-      getFinishNode(grid)
-    );
+
+    const walls = recursiveDivision(grid, startNode, finishNode);
+    this.setState({ maze_walls: walls });
 
     /**
-     * Animate the walls
+     * Animate the maze
      */
-
+    console.log("ANIMATING THE MAZE...");
     const newGrid = grid.slice();
     for (let i = 0; i < walls.length; i++) {
       setTimeout(() => {
@@ -237,10 +249,32 @@ export default class PathfindingVisualizer extends Component {
           "node node-maze";
       }, 10 * i);
     }
+
+    /**
+     * To Change the Status of the maze walls to isWall True and Update
+     * the state of the maze.
+     */
+    this.setState({ grid: newGrid });
   }
 
+  // recursiveDivisionTest(numerator, denominator){
+  //   let counter = 0;
+  //   if(numerator < denominator) return counter;
+  //   counter = counter + 1;
+  //   console.log(
+  //     `${numerator} - ${denominator} = ${numerator - denominator}`
+  //   );
+  //   return this.recursiveDivisionTest(numerator - denominator, denominator) + counter;
+  // }
+
+  handleOnChangelAlgorithm = (e) => {
+    console.log(this.state.algorithmsList);
+    this.setState({ selectedAlgorithm: e.target.value });
+  };
+
   render() {
-    const { grid, mouseIsPressed, selectedAlgorithm } = this.state;
+    const { grid, mouseIsPressed, selectedAlgorithm, algorithmsList } =
+      this.state;
     return (
       <>
         {/* <Header selectedAlgorithm={selectedAlgorithm} /> */}
@@ -249,8 +283,21 @@ export default class PathfindingVisualizer extends Component {
           className="visualizer-btn"
           onClick={() => this.visualizeDijkstra()}
         >
-          Visualize Dijkstra's Algorithm
+          Visualize {selectedAlgorithm}
         </button>
+        <select
+          className="btn"
+          onChange={this.handleOnChangelAlgorithm}
+          value={selectedAlgorithm}
+        >
+          {algorithmsList.map((item, index) => {
+            return (
+              <option key={index} value={item.value}>
+                {item.label}
+              </option>
+            );
+          })}
+        </select>
         <button className="btn" onClick={() => this.clearBoard()}>
           Clear Board
         </button>

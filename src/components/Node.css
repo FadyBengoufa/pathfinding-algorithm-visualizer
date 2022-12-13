@@ -5,9 +5,9 @@
   display: inline-block;
 }
 
-.distance{
-      font-size: .5rem;
-      display: none;
+.distance {
+  font-size: 0.5rem;
+  display: none;
 }
 
 .node-finish {
@@ -26,9 +26,8 @@
 
 .node-maze {
   background-color: rgb(12, 53, 71);
-  outline: none;
+  outline: none !important;
 }
-
 
 .node-visited {
   animation-name: visitedAnimation;
@@ -66,11 +65,11 @@
 .node-wall {
   background-color: rgb(12, 53, 71);
 }
-.node-shortest-path-start{
+.node-shortest-path-start {
   background-color: green;
 }
 
-.node-shortest-path-end{
+.node-shortest-path-end {
   background-color: red;
 }
 
