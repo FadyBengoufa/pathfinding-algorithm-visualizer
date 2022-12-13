@@ -277,7 +277,7 @@ export default class PathfindingVisualizer extends Component {
       this.state;
     return (
       <>
-        <Header selectedAlgorithm={selectedAlgorithm} />
+        {/* <Header selectedAlgorithm={selectedAlgorithm} /> */}
         <h3>Pathfinding Algorithm</h3>
         <button
           className="visualizer-btn"
